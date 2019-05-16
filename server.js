@@ -61,47 +61,87 @@ app.get("/scrape", function(req, res) {
     // Load the html body from axios into cheerio
     var $ = cheerio.load(response.data);
 
-    // console.log(response.data);
+    let counterVariable1 = 0;
+    let counterVariable2 = 0;
 
-    //former class selector iHepIF
+    //former class selector "iHepIF"
 
     //".y8HYJ-y_lTUHkQIc1mdCq"
 
+    //creating a basic counter for now--I know this code is repetitive and can be dried up:
+    $("._1poyrkZ7g36PawDueRza-J").each(function(i, element) {
+      counterVariable1++;
+    });
+
     // For each element with a "title" class
     $("._1poyrkZ7g36PawDueRza-J").each(function(i, element) {
-      //   array.push(element);
-      //   console.log(array.length);
-      // Save the text and href of each link enclosed in the current element
-      //   var title = $(element).text();
-
-      var title = $(element)
-        .find(".y8HYJ-y_lTUHkQIc1mdCq")
-        .text();
-
-      var link =
-        "https://www.reddit.com" +
-        $(element)
+      let newArticle = {
+        title: $(element)
           .find(".y8HYJ-y_lTUHkQIc1mdCq")
-          .children()
-          .attr("href");
+          .text(),
 
-      var subtitle = $(element)
-        .find(".s1w8oh2o-10")
-        .text();
+        subtitle: $(element)
+          .find(".s1w8oh2o-10")
+          .text(),
 
-      var author = $(element)
-        .find("._2tbHP6ZydRpjI44J3syuqC")
-        .text();
+        author: $(element)
+          .find("._2tbHP6ZydRpjI44J3syuqC")
+          .text(),
+
+        link:
+          "https://www.reddit.com" +
+          $(element)
+            .find(".y8HYJ-y_lTUHkQIc1mdCq")
+            .children()
+            .attr("href")
+      };
+
+      Article.create(newArticle)
+        .then(function(dbArticle) {
+          // View the added result in the console
+          console.log(dbArticle);
+        })
+        .catch(function(err) {
+          // If an error occurred, log it
+          console.log(err);
+        });
+
+      counterVariable2++;
+
+      //making sure result doesn't get sent back until all results are in
+
+      if (counterVariable2 == counterVariable1) {
+        res.send("Scrape Complete");
+      }
+
+      // var title = $(element)
+      //   .find(".y8HYJ-y_lTUHkQIc1mdCq")
+      //   .text();
+
+      // var link =
+      //   "https://www.reddit.com" +
+      //   $(element)
+      //     .find(".y8HYJ-y_lTUHkQIc1mdCq")
+      //     .children()
+      //     .attr("href");
+
+      // var subtitle = $(element)
+      //   .find(".s1w8oh2o-10")
+      //   .text();
+
+      // var author = $(element)
+      //   .find("._2tbHP6ZydRpjI44J3syuqC")
+      //   .text();
 
       //   console.log("We got some elements!");
 
-      console.log(title);
+      // console.log(title);
 
-      console.log(link);
+      // console.log(link);
 
-      //   console.log(subtitle);--works!
+      // //   console.log(subtitle);--works!
 
-      console.log(author);
+      // console.log(author);
 
       //   console.log(title);
 
@@ -130,8 +170,6 @@ app.get("/scrape", function(req, res) {
       //   }
     });
   });
-
-  console.log(array.length);
 
   // Send a "Scrape Complete" message to the browser
   //   res.send("Scrape Complete");
