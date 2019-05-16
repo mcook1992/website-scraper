@@ -34,23 +34,16 @@ mongoose.connect(MONGODB_URI);
 //   console.log("Database Error:", error);
 // });
 
-var testData = {
-  title: "TestTitle",
-  subtitle: "Interesting subtext",
-  link: "medium.com",
-  author: "Testy McTesterston"
-};
-
 app.get("/", function(req, res) {
   // Create a new article using req.body
-  Article.create(testData)
-    .then(function(dbUser) {
-      // If saved successfully, send the the new User document to the client
-      console.log(dbUser);
+  Article.find({})
+    .then(function(dbArticle) {
+      // If we were able to successfully find Articles, send them back to the client
+      res.json(dbArticle);
     })
     .catch(function(err) {
-      // If an error occurs, send the error to the client
-      console.log(err);
+      // If an error occurred, send it to the client
+      res.json(err);
     });
 });
 
