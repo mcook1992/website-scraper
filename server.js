@@ -43,16 +43,16 @@ mongoose.connect(MONGODB_URI);
 //   console.log("Database Error:", error);
 // });
 
-var testComment = {
-  articleID: "test2",
-  articleTitle: "I got dressed and brushed my hair today!",
-  text: "Great post",
-  isFavorite: false
-};
+// var testComment = {
+//   articleID: "test2",
+//   articleTitle: "I got dressed and brushed my hair today!",
+//   text: "Great post",
+//   isFavorite: false
+// };
 
-Comment.create(testComment).then(function(element) {
-  console.log("We made a test comment!");
-});
+// Comment.create(testComment).then(function(element) {
+//   console.log("We made a test comment!");
+// });
 
 app.get("/test", function(req, res) {
   // Create a new article using req.body
@@ -70,9 +70,37 @@ app.get("/test", function(req, res) {
 });
 
 app.get("/comments", function(req, res) {
-  Comment.find({ articleID: "test" }).then(function(dbComment) {
-    res.json(dbComment);
+  console.log("get comment request made");
+  var id = "test";
+
+  // req.params.id;
+
+  Comment.find({ articleID: id }).then(function(dbComment) {
+    console.log(dbComment[0].id);
+
+    var articlePageObject = {
+      id: dbComment[0].id,
+      array: dbComment
+    };
+
+    console.log(dbComment[0].id);
+
+    res.render("article", { articlePageObject: articlePageObject });
   });
+});
+
+app.post("/comments-post/", function(req, res) {
+  console.log("post comment registered");
+  console.log(req.body.text);
+  console.log(req.body.id);
+
+  // console.log(req.body.text.data_value);
+  // var newComment = {
+  //   articleID: req.body.text.data_value,
+  //   articleTitle: "testing",
+  //   text: req.body.text,
+  //   isFavorite: false
+  // };
 });
 
 app.get("/scrape", function(req, res) {

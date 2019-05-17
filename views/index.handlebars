@@ -6,9 +6,11 @@
         <h4>Articles</h4>
         {{#each dbArticle}}
         <li>
-            <a href={{link}}>{{title}}</a>
+            <a href={{link}}>{{title}}</a> <button class="commentButton" id={{id}}>Comment</button>
         </li>
 
         {{/each}}
     </ul>
+
+    <script src="index.js"></script>
 </body>
