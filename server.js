@@ -1,24 +1,33 @@
 const express = require("express");
-const handlebars = require("express-handlebars");
+const exphbs = require("express-handlebars");
+var handlebars = require("handlebars");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const mongoose = require("mongoose");
 const mongojs = require("mongojs");
+var path = require("path");
+var bodyParser = require("body-parser");
 
 const PORT = process.env.PORT || 3000;
 var MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
-const app = express();
+var app = express();
 
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 // Make public a static folder
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "./public/")));
+
+//setting up handlebars:
+
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 //importing models
 
 const Article = require("./article-model");
+const Comment = require("./comment-model");
 
 // //Configure the database with MONGOJS
 
@@ -34,17 +43,36 @@ mongoose.connect(MONGODB_URI);
 //   console.log("Database Error:", error);
 // });
 
-app.get("/", function(req, res) {
+var testComment = {
+  articleID: "test2",
+  articleTitle: "I got dressed and brushed my hair today!",
+  text: "Great post",
+  isFavorite: false
+};
+
+Comment.create(testComment).then(function(element) {
+  console.log("We made a test comment!");
+});
+
+app.get("/test", function(req, res) {
   // Create a new article using req.body
   Article.find({})
     .then(function(dbArticle) {
       // If we were able to successfully find Articles, send them back to the client
-      res.json(dbArticle);
+      // res.json(dbArticle);
+
+      res.render("index", { dbArticle: dbArticle });
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
       res.json(err);
     });
+});
+
+app.get("/comments", function(req, res) {
+  Comment.find({ articleID: "test" }).then(function(dbComment) {
+    res.json(dbComment);
+  });
 });
 
 app.get("/scrape", function(req, res) {
@@ -106,66 +134,8 @@ app.get("/scrape", function(req, res) {
       if (counterVariable2 == counterVariable1) {
         res.send("Scrape Complete");
       }
-
-      // var title = $(element)
-      //   .find(".y8HYJ-y_lTUHkQIc1mdCq")
-      //   .text();
-
-      // var link =
-      //   "https://www.reddit.com" +
-      //   $(element)
-      //     .find(".y8HYJ-y_lTUHkQIc1mdCq")
-      //     .children()
-      //     .attr("href");
-
-      // var subtitle = $(element)
-      //   .find(".s1w8oh2o-10")
-      //   .text();
-
-      // var author = $(element)
-      //   .find("._2tbHP6ZydRpjI44J3syuqC")
-      //   .text();
-
-      //   console.log("We got some elements!");
-
-      // console.log(title);
-
-      // console.log(link);
-
-      // //   console.log(subtitle);--works!
-
-      // console.log(author);
-
-      //   console.log(title);
-
-      //   var link = $(element)
-      //     .children("a")
-      //     .attr("href");
-
-      // If this found element had both a title and a link
-      //   if (title && link) {
-      //     // Insert the data in the scrapedData db
-      //     db.scrapedData.insert(
-      //       {
-      //         title: title,
-      //         link: link
-      //       },
-      //       function(err, inserted) {
-      //         if (err) {
-      //           // Log the error if one is encountered during the query
-      //           console.log(err);
-      //         } else {
-      //           // Otherwise, log the inserted data
-      //           console.log(inserted);
-      //         }
-      //       }
-      //     );
-      //   }
     });
   });
-
-  // Send a "Scrape Complete" message to the browser
-  //   res.send("Scrape Complete");
 });
 
 app.listen(PORT, function() {

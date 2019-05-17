@@ -1,0 +1,14 @@
+<body>
+    <h1>Welcome to this page</h1>
+
+
+    <ul id="uneaten-Burgers">
+        <h4>Articles</h4>
+        {{#each dbArticle}}
+        <li>
+            <a href={{link}}>{{title}}</a>
+        </li>
+
+        {{/each}}
+    </ul>
+</body>

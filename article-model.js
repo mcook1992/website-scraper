@@ -22,6 +22,11 @@ var ArticleSchema = new Schema({
   author: {
     type: String,
     trim: true
+  },
+
+  isFavorite: {
+    type: Boolean,
+    default: false
   }
 });
 
