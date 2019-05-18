@@ -70,8 +70,8 @@ app.get("/test", function(req, res) {
 });
 
 app.get("/comments", function(req, res) {
-  console.log("get comment request made");
-  var id = "test";
+  console.log(req.body.id);
+  var id = req.body.id;
 
   // req.params.id;
 
@@ -94,13 +94,25 @@ app.post("/comments-post/", function(req, res) {
   console.log(req.body.text);
   console.log(req.body.id);
 
-  // console.log(req.body.text.data_value);
-  // var newComment = {
-  //   articleID: req.body.text.data_value,
-  //   articleTitle: "testing",
-  //   text: req.body.text,
-  //   isFavorite: false
-  // };
+  var newComment = {
+    articleID: req.body.id,
+    articleTitle: "testing",
+    text: req.body.text,
+    isFavorite: false
+  };
+
+  Comment.create(newComment).then(function(element) {
+    Comment.find({ articleID: newComment.articleID }).then(function(dbComment) {
+      console.log(dbComment[0].id);
+
+      var articlePageObject = {
+        id: dbComment[0].id,
+        array: dbComment
+      };
+
+      console.log(dbComment[0].id);
+    });
+  });
 });
 
 app.get("/scrape", function(req, res) {

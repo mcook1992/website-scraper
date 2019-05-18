@@ -6,9 +6,22 @@ $(".commentButton").on("click", function(event) {
   console.log("button pressed");
   id = this.id;
 
-  $.get("/comments", function() {
-    window.location = "/comments";
+  $.ajax({
+    url: "/comments",
+    type: "GET",
+    data: { id: id },
+    success: function(response) {
+      alert("We did it!");
+      window.location = "/comments";
+    },
+    error: function() {
+      alert("error");
+    }
   });
+
+  //   $.get("/comments", function() {
+  //     window.location = "/comments";
+  //   });
 });
 
 $("#commentSubmitButton").on("click", function(event) {
@@ -26,6 +39,7 @@ $("#commentSubmitButton").on("click", function(event) {
     data: { id: id, text: formInput },
     success: function(response) {
       alert("We did it!");
+      location.reload();
     },
     error: function() {
       alert("error");
