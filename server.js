@@ -70,6 +70,21 @@ app.get("/home", function(req, res) {
     });
 });
 
+app.get("/saved", function(req, res) {
+  console.log("save get requeset obtained");
+
+  Article.find({ isFavorite: true })
+    .then(function(dbArticle) {
+      res.render("favorite-articles", { dbArticle: dbArticle });
+      // If we were able to successfully find Articles, send them back to the client
+      // res.json(dbArticle);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+
 app.post("/saved-articles", function(req, res) {
   console.log("The req body id value is " + req.body.id);
 
@@ -79,6 +94,8 @@ app.post("/saved-articles", function(req, res) {
     element
   ) {
     console.log(element);
+
+    //add in that all those comments should be favorited as well, though not really necessary.
   });
 
   // Article.updateOne({ id: req.body.id }, { $set: { isFavorite: true } }).then(
