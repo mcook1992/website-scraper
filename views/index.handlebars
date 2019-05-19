@@ -6,7 +6,8 @@
         <h4>Articles</h4>
         {{#each dbArticle}}
         <li>
-            <a href={{link}}>{{title}}</a> <button class="commentButton" id={{id}}>Comment</button>
+            <a href={{link}}>{{title}}</a> <button class="commentButton" id={{id}}>Comment</button> <button
+                class="favoriteButton" data-value={{id}}>Favorite Button</button>
         </li>
 
         {{/each}}

@@ -39,6 +39,8 @@ const Comment = require("./comment-model");
 
 mongoose.connect(MONGODB_URI);
 
+mongoose.set("useFindAndModify", false);
+
 // db.on("error", function(error) {
 //   console.log("Database Error:", error);
 // });
@@ -54,19 +56,36 @@ mongoose.connect(MONGODB_URI);
 //   console.log("We made a test comment!");
 // });
 
-app.get("/test", function(req, res) {
+app.get("/home", function(req, res) {
   // Create a new article using req.body
   Article.find({})
     .then(function(dbArticle) {
+      res.render("index", { dbArticle: dbArticle });
       // If we were able to successfully find Articles, send them back to the client
       // res.json(dbArticle);
-
-      res.render("index", { dbArticle: dbArticle });
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
       res.json(err);
     });
+});
+
+app.post("/saved-articles", function(req, res) {
+  console.log("The req body id value is " + req.body.id);
+
+  console.log("saved article post request recognized");
+
+  Article.findByIdAndUpdate(req.body.id, { isFavorite: true }, function(
+    element
+  ) {
+    console.log(element);
+  });
+
+  // Article.updateOne({ id: req.body.id }, { $set: { isFavorite: true } }).then(
+  //   function(element) {
+  //     console.log(element);
+  //   }
+  // );
 });
 
 app.get("/comments", function(req, res) {
@@ -154,7 +173,9 @@ app.get("/scrape", function(req, res) {
           $(element)
             .find(".y8HYJ-y_lTUHkQIc1mdCq")
             .children()
-            .attr("href")
+            .attr("href"),
+
+        isFavorite: false
       };
 
       Article.create(newArticle)

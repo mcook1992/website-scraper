@@ -46,3 +46,22 @@ $("#commentSubmitButton").on("click", function(event) {
     }
   });
 });
+
+$(".favoriteButton").on("click", function(event) {
+  event.preventDefault();
+  console.log("favorite button pressed");
+
+  var newID = this.getAttribute("data-value");
+
+  $.ajax({
+    url: "/saved-articles",
+    type: "POST",
+    data: { id: newID },
+    success: function(response) {
+      alert("You're article was saved");
+    },
+    error: function() {
+      alert("error");
+    }
+  });
+});
