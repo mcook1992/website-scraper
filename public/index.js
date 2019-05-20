@@ -1,27 +1,71 @@
 "use strict";
-var id;
 
 $(".commentButton").on("click", function(event) {
   event.preventDefault();
   console.log("button pressed");
-  id = this.id;
+  var id = this.getAttribute("data-value");
+
+  console.log(id);
+
+  var url = "/comments/" + id;
+  console.log(url);
 
   $.ajax({
-    url: "/comments",
+    url: url,
     type: "GET",
-    data: { id: id },
-    success: function(response) {
-      alert("We did it!");
-      window.location = "/comments";
+    success: function() {
+      window.location = url;
+    }
+  });
+});
+
+$(".scrapeButton").on("click", function(event) {
+  event.preventDefault();
+  alert("We're working on finding the newest articles");
+
+  $.ajax({
+    url: "/scrape",
+    type: "GET",
+    success: function() {
+      alert("Scrape complete!");
+      location.reload();
     },
     error: function() {
       alert("error");
     }
   });
+});
 
-  //   $.get("/comments", function() {
-  //     window.location = "/comments";
-  //   });
+$(".deleteButton").on("click", function(event) {
+  var newID = this.getAttribute("data-value");
+
+  $.ajax({
+    url: "/delete",
+    type: "PUT",
+    data: { id: newID },
+    success: function(response) {
+      alert("You're article was deleted");
+    },
+    error: function() {
+      alert("error");
+    }
+  });
+});
+
+//Going to favorites page
+
+$(".goToFavoritesPage").on("click", function(event) {
+  $.ajax({
+    url: "/saved",
+    type: "GET",
+    success: function(response) {
+      alert("We did it!");
+      window.location = "/saved";
+    },
+    error: function() {
+      alert("error");
+    }
+  });
 });
 
 $("#commentSubmitButton").on("click", function(event) {
@@ -39,7 +83,7 @@ $("#commentSubmitButton").on("click", function(event) {
     data: { id: id, text: formInput },
     success: function(response) {
       alert("We did it!");
-      location.reload();
+      // location.reload();
     },
     error: function() {
       alert("error");
@@ -64,4 +108,8 @@ $(".favoriteButton").on("click", function(event) {
       alert("error");
     }
   });
+});
+
+$(".goToHomePage").on("click", function() {
+  window.location = "/home";
 });

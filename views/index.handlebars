@@ -1,12 +1,15 @@
 <body>
     <h1>Welcome to this page</h1>
 
+    <button class="goToFavoritesPage">Saved Articles</button>
+    <button class="scrapeButton">Get Newest Articles</button>
+
 
     <ul id="uneaten-Burgers">
         <h4>Articles</h4>
         {{#each dbArticle}}
         <li>
-            <a href={{link}}>{{title}}</a> <button class="commentButton" id={{id}}>Comment</button> <button
+            <a href={{link}}>{{title}}</a> <button class="commentButton" data-value={{id}}>Comment</button> <button
                 class="favoriteButton" data-value={{id}}>Favorite Button</button>
         </li>
 

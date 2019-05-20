@@ -16,6 +16,7 @@ var app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(bodyParser.json());
 // Make public a static folder
 app.use(express.static(path.join(__dirname, "./public/")));
 
@@ -56,6 +57,8 @@ mongoose.set("useFindAndModify", false);
 //   console.log("We made a test comment!");
 // });
 
+var currentPageId;
+
 app.get("/home", function(req, res) {
   // Create a new article using req.body
   Article.find({})
@@ -68,6 +71,16 @@ app.get("/home", function(req, res) {
       // If an error occurred, send it to the client
       res.json(err);
     });
+});
+
+app.put("/delete", function(req, res) {
+  Article.findByIdAndUpdate(req.body.id, { isFavorite: false }, function(
+    element
+  ) {
+    console.log("favorite tag removed");
+
+    //add in that all those comments should be favorited as well, though not really necessary.
+  });
 });
 
 app.get("/saved", function(req, res) {
@@ -105,23 +118,50 @@ app.post("/saved-articles", function(req, res) {
   // );
 });
 
-app.get("/comments", function(req, res) {
-  console.log(req.body.id);
-  var id = req.body.id;
+app.get("/comments/:id", function(req, res) {
+  console.log("get request registered");
+  console.log(req.params.id);
+
+  var currentID = req.params.id;
+
+  if (req.params.id == "index.js") {
+    console.log("the req is index.js");
+    currentID = currentPageId;
+  } else {
+    currentPageId = req.params.id;
+  }
+
+  console.log(
+    "The current ID is " +
+      currentID +
+      " and the current page id is = " +
+      currentPageId
+  );
+  //default if there are no comments on an article
+  var articlePageObject = {
+    id: currentPageId,
+    array: []
+  };
+
+  console.log(articlePageObject.id);
 
   // req.params.id;
 
-  Comment.find({ articleID: id }).then(function(dbComment) {
-    console.log(dbComment[0].id);
-
-    var articlePageObject = {
-      id: dbComment[0].id,
-      array: dbComment
-    };
-
-    console.log(dbComment[0].id);
-
-    res.render("article", { articlePageObject: articlePageObject });
+  Comment.findById(currentPageId, function(err, dbComment) {
+    console.log(dbComment);
+    if (dbComment) {
+      console.log("There's a comment on this article");
+      articlePageObject = {
+        id: dbComment[0].id,
+        array: dbComment
+      };
+      res.render("article", { articlePageObject: articlePageObject });
+    } else {
+      console.log("We're in the else loop");
+      console.log(articlePageObject.id);
+      res.render("article", { articlePageObject: articlePageObject });
+      console.log("We rendered a page?");
+    }
   });
 });
 
@@ -153,6 +193,10 @@ app.post("/comments-post/", function(req, res) {
 
 app.get("/scrape", function(req, res) {
   var array = [];
+
+  Article.deleteMany({ isFavorite: false }, function(err) {
+    console.log("Articles deleted");
+  });
   // Make a request via axios for the news section of `ycombinator`
   axios.get("https://www.reddit.com/r/mentalhealth/").then(function(response) {
     // Load the html body from axios into cheerio
