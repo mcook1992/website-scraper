@@ -75,6 +75,7 @@ $("#commentSubmitButton").on("click", function(event) {
   var formInput = $("#formInput").val();
 
   console.log($("#formInput").attr("data_value"));
+  var id = $("#formInput").attr("data_value");
 
   console.log(formInput);
   $.ajax({
@@ -83,7 +84,7 @@ $("#commentSubmitButton").on("click", function(event) {
     data: { id: id, text: formInput },
     success: function(response) {
       alert("We did it!");
-      // location.reload();
+      location.reload();
     },
     error: function() {
       alert("error");

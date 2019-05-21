@@ -1,23 +1,23 @@
-<body>
-    <h1>Article Title</h1>
+<h1>Article Title</h1>
 
 
-    <form>
-        Text:<br>
-        <input id="formInput" type="text" name="text" data_value={{articlePageObject.id}},
-            value="write comment here"><br>
-        <input type="submit" id="commentSubmitButton" value="Submit">
+<form>
+    Text:
+    <br />
+    <input id="formInput" type="text" name="text" data_value={{articlePageObject.id}} value="write comment here" />
+    <br />
+    <input type="button" id="commentSubmitButton" value="Submit" />
 
-    </form>
-    <ul>
-        <h4>Comments</h4>
-        {{#each articlePageObject.array}}
-        <li>
-            <a>{{text}}</a>
-        </li>
+</form>
+<ul>
+    <h4>Comments</h4>
+    {{#each articlePageObject.array}}
+    <li>
+        <a>{{text}}</a>
+    </li>
+    {{/each}}
+</ul>
 
-        {{/each}}
-    </ul>
 
-    <script src="index.js"></script>
-</body>
+
+<script src="../index.js"></script>

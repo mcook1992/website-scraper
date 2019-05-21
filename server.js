@@ -118,6 +118,15 @@ app.post("/saved-articles", function(req, res) {
   // );
 });
 
+// app.get("/comments", function(req, res) {
+//   var articlePageObject = {
+//     id: currentPageId,
+//     array: [{ text: "There's no article comment here" }]
+//   };
+
+//   res.render("article", { articlePageObject: articlePageObject });
+// });
+
 app.get("/comments/:id", function(req, res) {
   console.log("get request registered");
   console.log(req.params.id);
@@ -140,19 +149,19 @@ app.get("/comments/:id", function(req, res) {
   //default if there are no comments on an article
   var articlePageObject = {
     id: currentPageId,
-    array: []
+    array: [{ text: "no article yet on this article" }]
   };
 
   console.log(articlePageObject.id);
 
   // req.params.id;
 
-  Comment.findById(currentPageId, function(err, dbComment) {
+  Comment.find({ articleID: currentPageId }, function(err, dbComment) {
     console.log(dbComment);
     if (dbComment) {
       console.log("There's a comment on this article");
       articlePageObject = {
-        id: dbComment[0].id,
+        id: currentPageId,
         array: dbComment
       };
       res.render("article", { articlePageObject: articlePageObject });

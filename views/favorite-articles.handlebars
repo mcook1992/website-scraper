@@ -1,19 +1,17 @@
-<body>
-    <h1>Welcome to favorites page</h1>
+<h1>Welcome to favorites page</h1>
 
-    <button class="goToHomePage">Back to main page</button>
+<button class="goToHomePage">Back to main page</button>
 
 
-    <ul>
-        <h4>Favorite Articles</h4>
-        {{#each dbArticle}}
-        <li>
-            <a href={{link}}>{{title}}</a> <button class="commentButton" id={{id}}>Comment</button> <button
-                class="deleteButton" data-value={{id}}>Delete</button>
-        </li>
+<ul>
+    <h4>Favorite Articles</h4>
+    {{#each dbArticle}}
+    <li>
+        <a href={{link}}>{{title}}</a> <button class="commentButton" id={{id}}>Comment</button> <button
+            class="deleteButton" data-value={{id}}>Delete</button>
+    </li>
 
-        {{/each}}
-    </ul>
+    {{/each}}
+</ul>
 
-    <script src="index.js"></script>
-</body>
+<script src="index.js"></script>
