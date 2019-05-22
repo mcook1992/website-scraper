@@ -107,6 +107,7 @@ app.post("/saved-articles", function(req, res) {
     element
   ) {
     console.log(element);
+    res.sendStatus(200);
 
     //add in that all those comments should be favorited as well, though not really necessary.
   });
@@ -140,38 +141,60 @@ app.get("/comments/:id", function(req, res) {
     currentPageId = req.params.id;
   }
 
-  console.log(
-    "The current ID is " +
-      currentID +
-      " and the current page id is = " +
-      currentPageId
-  );
-  //default if there are no comments on an article
-  var articlePageObject = {
-    id: currentPageId,
-    array: [{ text: "no article yet on this article" }]
-  };
+  var articleName;
+  var articleLink;
+  var articleAuthor;
 
-  console.log(articlePageObject.id);
+  Article.findById(req.params.id, function(err, dbArticle) {
+    console.log(dbArticle);
+    articleName = dbArticle.title;
+    articleLink = dbArticle.link;
+    articleAuthor = dbArticle.author;
+    console.log(articleName);
+
+    //setting a default object up to pass to handlebars
+
+    var articlePageObject = {
+      articleName: articleName,
+      articleLink: articleLink,
+      authorName: articleAuthor,
+      id: currentPageId,
+      array: [{ text: "no article yet on this article" }]
+    };
+
+    console.log(articlePageObject.id);
+
+    //loading the page based on comments
+    Comment.find({ articleID: currentPageId }, function(err, dbComment) {
+      console.log(dbComment);
+      if (dbComment) {
+        console.log("There's a comment on this article");
+        articlePageObject = {
+          articleName: articleName,
+          articleLink: articleLink,
+          authorName: articleAuthor,
+          id: currentPageId,
+          array: dbComment
+        };
+        res.render("article", { articlePageObject: articlePageObject });
+      } else {
+        console.log("We're in the else loop");
+        console.log(articlePageObject.id);
+        res.render("article", { articlePageObject: articlePageObject });
+        console.log("We rendered a page?");
+      }
+    });
+  });
+
+  // console.log(
+  //   "The current ID is " +
+  //     currentID +
+  //     " and the current page id is = " +
+  //     currentPageId
+  // );
+  //default if there are no comments on an article
 
   // req.params.id;
-
-  Comment.find({ articleID: currentPageId }, function(err, dbComment) {
-    console.log(dbComment);
-    if (dbComment) {
-      console.log("There's a comment on this article");
-      articlePageObject = {
-        id: currentPageId,
-        array: dbComment
-      };
-      res.render("article", { articlePageObject: articlePageObject });
-    } else {
-      console.log("We're in the else loop");
-      console.log(articlePageObject.id);
-      res.render("article", { articlePageObject: articlePageObject });
-      console.log("We rendered a page?");
-    }
-  });
 });
 
 app.post("/comments-post/", function(req, res) {
