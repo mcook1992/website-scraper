@@ -181,21 +181,23 @@ app.post("/comments-post/", function(req, res) {
 
   var newComment = {
     articleID: req.body.id,
-    articleTitle: "testing",
+    // articleTitle: "testing",
     text: req.body.text,
     isFavorite: false
   };
 
-  Comment.create(newComment).then(function(element) {
-    Comment.find({ articleID: newComment.articleID }).then(function(dbComment) {
+  Comment.create(newComment, function(err, brandNewComment) {
+    Comment.find({ articleID: newComment.articleID }, function(err, dbComment) {
       console.log(dbComment[0].id);
 
       var articlePageObject = {
-        id: dbComment[0].id,
+        id: newComment.articleID,
         array: dbComment
       };
 
       console.log(dbComment[0].id);
+
+      res.render("article", { articlePageObject: articlePageObject });
     });
   });
 });

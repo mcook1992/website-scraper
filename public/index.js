@@ -83,7 +83,7 @@ $("#commentSubmitButton").on("click", function(event) {
     type: "POST",
     data: { id: id, text: formInput },
     success: function(response) {
-      alert("We did it!");
+      alert("New comment added. If you can't see it, try refreshing the page");
       location.reload();
     },
     error: function() {
